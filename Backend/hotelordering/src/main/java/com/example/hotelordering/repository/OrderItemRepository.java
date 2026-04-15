@@ -1,10 +1,11 @@
 package com.example.hotelordering.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import com.example.hotelordering.entity.OrderItem;
 
-import java.util.List;
+import com.example.hotelordering.entity.OrderItem;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
@@ -14,7 +15,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
                 JOIN menu_items m ON oi.menu_item_id = m.menu_item_id
                 GROUP BY m.menu_item_id, m.name
                 ORDER BY total_count DESC
-                LIMIT 1
+                LIMIT 3
             """, nativeQuery = true)
     List<Object[]> getTopSellingItems();
 

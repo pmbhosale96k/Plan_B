@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { extractMessage } from '../../api/helpers'
+import { extractErrorMessage, extractMessage } from '../../api/helpers'
 import { registerUser } from '../../api/userApi'
 import Loader from '../../components/Loader'
 
@@ -23,7 +23,11 @@ function Register() {
       navigate('/login')
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || error.message || 'Registration failed. Please try again.',
+        extractErrorMessage(
+          error,
+          'Registration failed. Please try again.',
+          'The current backend does not expose user registration yet.',
+        ),
       )
     } finally {
       setIsSubmitting(false)

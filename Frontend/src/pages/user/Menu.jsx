@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getBestSellers, getFavourites, getMenu, toggleFavourite } from '../../api/userApi'
 import Loader from '../../components/Loader'
 import MenuCard from '../../components/MenuCard'
@@ -20,14 +20,27 @@ function normalizeMenuItems(items) {
   }))
 }
 
+function normalizeBestSellerStats(items) {
+  if (!Array.isArray(items)) {
+    return []
+  }
+
+  return items.map((item) => ({
+    menuItemId: item.menuItemId ?? item.id,
+    name: item.name || item.itemName || 'Menu Item',
+    totalCount: Number(item.totalCount ?? item.quantitySold ?? item.orderCount ?? 0),
+  }))
+}
+
 function Menu() {
   const { addToCart } = useCart()
   const [menuItems, setMenuItems] = useState([])
-  const [bestSellers, setBestSellers] = useState([])
+  const [bestSellerStats, setBestSellerStats] = useState([])
   const [favouriteIds, setFavouriteIds] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [favouriteLoadingId, setFavouriteLoadingId] = useState(null)
+  const [supportsFavourites, setSupportsFavourites] = useState(false)
 
   useEffect(() => {
     async function loadMenuData() {
@@ -46,19 +59,24 @@ function Menu() {
         }
 
         if (bestSellerResponse.status === 'fulfilled') {
-          setBestSellers(normalizeMenuItems(extractPayload(bestSellerResponse.value)))
+          setBestSellerStats(normalizeBestSellerStats(extractPayload(bestSellerResponse.value)))
         }
 
         if (favouritesResponse.status === 'fulfilled') {
           const favourites = normalizeMenuItems(extractPayload(favouritesResponse.value))
           setFavouriteIds(favourites.map((item) => item.id))
+          setSupportsFavourites(true)
+        } else {
+          setSupportsFavourites(false)
         }
 
         if (menuResponse.status !== 'fulfilled') {
           throw menuResponse.reason
         }
       } catch (error) {
-        setErrorMessage(error.response?.data?.message || error.message || 'Unable to load the menu right now.')
+        setErrorMessage(
+          extractErrorMessage(error, 'Unable to load the menu right now.', 'The menu endpoint is not ready yet.'),
+        )
       } finally {
         setIsLoading(false)
       }
@@ -67,9 +85,16 @@ function Menu() {
     loadMenuData()
   }, [])
 
-  const bestSellerIds = useMemo(() => new Set(bestSellers.map((item) => item.id)), [bestSellers])
+  const bestSellerIds = useMemo(
+    () => new Set(bestSellerStats.map((item) => item.menuItemId).filter(Boolean)),
+    [bestSellerStats],
+  )
 
   async function handleToggleFavourite(item) {
+    if (!supportsFavourites) {
+      return
+    }
+
     setFavouriteLoadingId(item.id)
 
     try {
@@ -81,7 +106,11 @@ function Menu() {
       )
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || error.message || 'Unable to update favourites right now.',
+        extractErrorMessage(
+          error,
+          'Unable to update favourites right now.',
+          'Favourites are not available in the current backend yet.',
+        ),
       )
     } finally {
       setFavouriteLoadingId(null)
@@ -90,11 +119,36 @@ function Menu() {
 
   const fullMenu = menuItems.length
     ? menuItems
-    : bestSellers.filter((item, index, items) => items.findIndex((entry) => entry.id === item.id) === index)
+    : []
 
-  const featuredItems = bestSellers.length
-    ? bestSellers
-    : fullMenu.filter((item) => bestSellerIds.has(item.id)).slice(0, 4)
+  const featuredItems = useMemo(() => {
+    if (bestSellerStats.length) {
+      return bestSellerStats
+        .map((item) => {
+          const matchedItem = fullMenu.find((menuItem) => menuItem.id === item.menuItemId)
+
+          if (matchedItem) {
+            return {
+              ...matchedItem,
+              description: matchedItem.description || `Ordered ${item.totalCount} times recently.`,
+            }
+          }
+
+          return {
+            id: item.menuItemId,
+            name: item.name,
+            price: 0,
+            description: `Ordered ${item.totalCount} times recently.`,
+            category: 'Best Seller',
+            imageUrl: '',
+          }
+        })
+        .filter((item, index, items) => items.findIndex((entry) => entry.id === item.id) === index)
+        .slice(0, 4)
+    }
+
+    return bestSellerIds.size ? fullMenu.filter((item) => bestSellerIds.has(item.id)).slice(0, 4) : fullMenu.slice(0, 4)
+  }, [bestSellerIds, bestSellerStats, fullMenu])
 
   return (
     <section className="page-content">
@@ -103,10 +157,13 @@ function Menu() {
           <p className="eyebrow">User Module</p>
           <h1>Menu</h1>
         </div>
-        <p>Browse the full menu, save favourites, and add items to your cart.</p>
+        <p>Browse the full menu and add items to your cart.</p>
       </div>
 
       {errorMessage ? <p className="message warning-message">{errorMessage}</p> : null}
+      {!supportsFavourites && !isLoading ? (
+        <p className="muted-text">Favourites are not exposed by the current backend yet.</p>
+      ) : null}
 
       {isLoading ? (
         <Loader label="Loading menu..." />
@@ -125,7 +182,7 @@ function Menu() {
                     item={item}
                     key={item.id}
                     onAddToCart={addToCart}
-                    onToggleFavourite={handleToggleFavourite}
+                    onToggleFavourite={supportsFavourites ? handleToggleFavourite : undefined}
                   />
                 ))
               ) : (
@@ -150,7 +207,7 @@ function Menu() {
                     item={item}
                     key={item.id}
                     onAddToCart={addToCart}
-                    onToggleFavourite={handleToggleFavourite}
+                    onToggleFavourite={supportsFavourites ? handleToggleFavourite : undefined}
                   />
                 ))
               ) : (

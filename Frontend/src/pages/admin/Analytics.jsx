@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getBestSellingItems, getTodayRevenue } from '../../api/adminApi'
 import Loader from '../../components/Loader'
 
@@ -27,7 +27,11 @@ function Analytics() {
         setBestSellers(Array.isArray(bestSellerData) ? bestSellerData.slice(0, 5) : [])
       } catch (error) {
         setErrorMessage(
-          error.response?.data?.message || 'Admin analytics endpoints are not available in the backend yet.',
+          extractErrorMessage(
+            error,
+            'Unable to load analytics right now.',
+            'The current backend does not expose the analytics endpoints yet.',
+          ),
         )
       } finally {
         setIsLoading(false)
@@ -68,14 +72,14 @@ function Analytics() {
           <section className="card">
             <div className="card-content">
               <div className="subsection-heading">
-                <h2>Top 5 Best-Selling Items</h2>
+                <h2>Top Best-Selling Items</h2>
               </div>
               {bestSellers.length ? (
                 <div className="list-layout">
                   {bestSellers.map((item, index) => (
-                    <div className="list-row" key={item.id || index}>
-                      <span>{item.name || item.itemName || `Item ${index + 1}`}</span>
-                      <span>{item.quantitySold || item.orderCount || item.totalSold || '-'}</span>
+                    <div className="list-row" key={item.menuItemId || index}>
+                      <span>{item.name || `Item ${index + 1}`}</span>
+                      <span>{item.totalCount ?? '-'}</span>
                     </div>
                   ))}
                 </div>

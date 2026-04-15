@@ -5,6 +5,8 @@ function MenuCard({
   isFavourite = false,
   favouriteLoading = false,
 }) {
+  const canToggleFavourite = typeof onToggleFavourite === 'function'
+
   return (
     <article className="card">
       <div className="card-image">
@@ -21,14 +23,16 @@ function MenuCard({
           <button className="primary-button" onClick={() => onAddToCart?.(item)} type="button">
             Add to Cart
           </button>
-          <button
-            className="secondary-button"
-            disabled={favouriteLoading}
-            onClick={() => onToggleFavourite?.(item)}
-            type="button"
-          >
-            {favouriteLoading ? 'Saving...' : isFavourite ? 'Remove Favourite' : 'Favourite'}
-          </button>
+          {canToggleFavourite ? (
+            <button
+              className="secondary-button"
+              disabled={favouriteLoading}
+              onClick={() => onToggleFavourite(item)}
+              type="button"
+            >
+              {favouriteLoading ? 'Saving...' : isFavourite ? 'Remove Favourite' : 'Favourite'}
+            </button>
+          ) : null}
         </div>
       </div>
     </article>

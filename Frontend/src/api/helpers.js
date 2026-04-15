@@ -27,3 +27,13 @@ export function extractToken(response) {
 
   return body?.token || body?.jwt || body?.data?.token || body?.data?.jwt || ''
 }
+
+export function extractErrorMessage(error, fallback, unavailableFallback = fallback) {
+  const status = error?.response?.status
+
+  if (status === 404 || status === 405 || status === 501) {
+    return unavailableFallback
+  }
+
+  return error?.response?.data?.message || error?.message || fallback
+}

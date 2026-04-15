@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { extractToken } from '../../api/helpers'
+import { extractErrorMessage, extractToken } from '../../api/helpers'
 import { loginUser } from '../../api/userApi'
 import Loader from '../../components/Loader'
 import { useAuth } from '../../context/AuthContext'
@@ -43,7 +43,11 @@ function Login() {
       navigate('/menu')
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || error.message || 'Unable to sign in with these credentials.',
+        extractErrorMessage(
+          error,
+          'Unable to sign in with these credentials.',
+          'The current backend does not expose user login yet. Use the demo user credentials for now.',
+        ),
       )
     } finally {
       setIsSubmitting(false)

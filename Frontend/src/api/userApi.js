@@ -20,7 +20,7 @@ export async function getBestSellers() {
   try {
     return await API.get('/user/menu/best-sellers')
   } catch (error) {
-    return getMenu()
+    return API.get('/admin/best-sellers')
   }
 }
 

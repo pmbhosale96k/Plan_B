@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { extractErrorMessage } from '../../api/helpers'
 import { placeOrder } from '../../api/userApi'
 import Loader from '../../components/Loader'
 import { useCart } from '../../context/CartContext'
@@ -34,7 +35,13 @@ function Cart() {
       setMessage('Order placed successfully.')
       navigate('/orders')
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || error.message || 'Unable to place the order.')
+      setErrorMessage(
+        extractErrorMessage(
+          error,
+          'Unable to place the order.',
+          'The current backend does not expose order placement yet.',
+        ),
+      )
     } finally {
       setIsSubmitting(false)
     }

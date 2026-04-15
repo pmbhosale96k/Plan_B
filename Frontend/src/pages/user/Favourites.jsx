@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getFavourites, toggleFavourite } from '../../api/userApi'
 import Loader from '../../components/Loader'
 import MenuCard from '../../components/MenuCard'
@@ -37,7 +37,11 @@ function Favourites() {
         setFavourites(normalizeItems(extractPayload(response)))
       } catch (error) {
         setErrorMessage(
-          error.response?.data?.message || error.message || 'Unable to load favourite items right now.',
+          extractErrorMessage(
+            error,
+            'Unable to load favourite items right now.',
+            'The current backend does not expose favourites yet.',
+          ),
         )
       } finally {
         setIsLoading(false)
@@ -55,7 +59,11 @@ function Favourites() {
       setFavourites((currentItems) => currentItems.filter((currentItem) => currentItem.id !== item.id))
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || error.message || 'Unable to update favourite items.',
+        extractErrorMessage(
+          error,
+          'Unable to update favourite items.',
+          'The current backend does not expose favourites yet.',
+        ),
       )
     } finally {
       setLoadingId(null)

@@ -8,12 +8,8 @@ export function getAdminOrders() {
   return API.get('/admin/orders')
 }
 
-export async function getAdminMenu() {
-  try {
-    return await API.get('/admin/menu/allProducts')
-  } catch (error) {
-    return API.get('/user/menu')
-  }
+export function getAdminMenu() {
+  return API.get('/admin/menu/allProducts')
 }
 
 export function addMenuItem(payload) {
@@ -33,5 +29,5 @@ export function getTodayRevenue() {
 }
 
 export function getBestSellingItems() {
-  return API.get('/admin/menu/best-sellers')
+  return API.get('/admin/best-sellers')
 }

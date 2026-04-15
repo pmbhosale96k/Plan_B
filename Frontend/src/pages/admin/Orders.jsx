@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getAdminOrders } from '../../api/adminApi'
 import Loader from '../../components/Loader'
 
@@ -19,7 +19,11 @@ function Orders() {
         setOrders(Array.isArray(data) ? data : [])
       } catch (error) {
         setErrorMessage(
-          error.response?.data?.message || 'Admin orders endpoint is not available in the backend yet.',
+          extractErrorMessage(
+            error,
+            'Unable to load admin orders right now.',
+            'The current backend does not expose the admin orders endpoint yet.',
+          ),
         )
       } finally {
         setIsLoading(false)
@@ -47,18 +51,22 @@ function Orders() {
             <thead>
               <tr>
                 <th>Order ID</th>
-                <th>Status</th>
+                <th>User ID</th>
+                <th>Items</th>
                 <th>Total</th>
-                <th>Created</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order, index) => (
-                <tr key={order.id || index}>
-                  <td>#{order.id || index + 1}</td>
-                  <td>{order.status || 'PENDING'}</td>
+                <tr key={order.orderId || index}>
+                  <td>#{order.orderId || index + 1}</td>
+                  <td>{order.userId ?? '-'}</td>
+                  <td>
+                    {Array.isArray(order.items)
+                      ? order.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
+                      : 0}
+                  </td>
                   <td>Rs. {Number(order.totalAmount || 0).toFixed(2)}</td>
-                  <td>{order.createdAt ? new Date(order.createdAt).toLocaleString() : '-'}</td>
                 </tr>
               ))}
             </tbody>

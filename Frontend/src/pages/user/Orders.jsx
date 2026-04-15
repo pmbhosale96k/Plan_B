@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getUserOrders } from '../../api/userApi'
 import Loader from '../../components/Loader'
 import OrderCard from '../../components/OrderCard'
@@ -20,7 +20,11 @@ function Orders() {
         setOrders(Array.isArray(data) ? data : [])
       } catch (error) {
         setErrorMessage(
-          error.response?.data?.message || error.message || 'Unable to load your orders right now.',
+          extractErrorMessage(
+            error,
+            'Unable to load your orders right now.',
+            'The current backend does not expose user orders yet.',
+          ),
         )
       } finally {
         setIsLoading(false)
@@ -47,7 +51,7 @@ function Orders() {
       ) : orders.length ? (
         <div className="grid-layout">
           {orders.map((order, index) => (
-            <OrderCard key={order.id || index} order={order} />
+            <OrderCard key={order.orderId || order.id || index} order={order} />
           ))}
         </div>
       ) : (

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { extractToken } from '../../api/helpers'
+import { extractErrorMessage, extractToken } from '../../api/helpers'
 import { loginAdmin } from '../../api/adminApi'
 import Loader from '../../components/Loader'
 import { useAuth } from '../../context/AuthContext'
@@ -39,7 +39,11 @@ function AdminLogin() {
       navigate('/admin/dashboard')
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || error.message || 'Unable to sign in as admin right now.',
+        extractErrorMessage(
+          error,
+          'Unable to sign in as admin right now.',
+          'The current backend does not expose admin login yet. Use the demo admin credentials for now.',
+        ),
       )
     } finally {
       setIsSubmitting(false)

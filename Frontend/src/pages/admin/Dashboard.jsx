@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { extractPayload } from '../../api/helpers'
+import { extractErrorMessage, extractPayload } from '../../api/helpers'
 import { getAdminOrders, getBestSellingItems, getTodayRevenue } from '../../api/adminApi'
 import Loader from '../../components/Loader'
 
@@ -7,7 +7,7 @@ function Dashboard() {
   const [stats, setStats] = useState({
     todayRevenue: 0,
     totalOrders: 0,
-    pendingOrders: 0,
+    totalItemsSold: 0,
     bestSellers: [],
   })
   const [isLoading, setIsLoading] = useState(true)
@@ -29,17 +29,28 @@ function Dashboard() {
         const orders = extractPayload(ordersResponse)
         const bestSellers = extractPayload(bestSellerResponse)
         const orderList = Array.isArray(orders) ? orders : []
+        const totalItemsSold = orderList.reduce(
+          (sum, order) =>
+            sum +
+            (Array.isArray(order.items)
+              ? order.items.reduce((itemSum, item) => itemSum + Number(item.quantity || 0), 0)
+              : 0),
+          0,
+        )
 
         setStats({
           todayRevenue: revenueData?.amount ?? revenueData?.todayRevenue ?? revenueData ?? 0,
           totalOrders: orderList.length,
-          pendingOrders: orderList.filter((order) => order.status === 'PENDING').length,
+          totalItemsSold,
           bestSellers: Array.isArray(bestSellers) ? bestSellers.slice(0, 5) : [],
         })
       } catch (error) {
         setErrorMessage(
-          error.response?.data?.message ||
-            'Admin analytics and orders endpoints are not available in the backend yet.',
+          extractErrorMessage(
+            error,
+            'Unable to load the admin dashboard right now.',
+            'The current backend does not expose the full admin dashboard data yet.',
+          ),
         )
       } finally {
         setIsLoading(false)
@@ -83,8 +94,8 @@ function Dashboard() {
             </article>
             <article className="card stat-card">
               <div className="card-content">
-                <p className="eyebrow">Pending</p>
-                <h2>{stats.pendingOrders}</h2>
+                <p className="eyebrow">Items Sold</p>
+                <h2>{stats.totalItemsSold}</h2>
               </div>
             </article>
           </section>
@@ -97,9 +108,9 @@ function Dashboard() {
               {stats.bestSellers.length ? (
                 <div className="list-layout">
                   {stats.bestSellers.map((item, index) => (
-                    <div className="list-row" key={item.id || index}>
-                      <span>{item.name || item.itemName || `Item ${index + 1}`}</span>
-                      <span>{item.quantitySold || item.orderCount || item.totalSold || '-'}</span>
+                    <div className="list-row" key={item.menuItemId || index}>
+                      <span>{item.name || `Item ${index + 1}`}</span>
+                      <span>{item.totalCount ?? '-'}</span>
                     </div>
                   ))}
                 </div>
