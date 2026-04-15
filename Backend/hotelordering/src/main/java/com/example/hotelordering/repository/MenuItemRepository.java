@@ -1,4 +1,7 @@
 package com.example.hotelordering.repository;
 
-public interface MenuItemRepository {
+import com.example.hotelordering.entity.MenuItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 }

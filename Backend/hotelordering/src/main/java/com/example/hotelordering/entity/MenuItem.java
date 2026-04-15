@@ -1,4 +1,4 @@
-package com.hcl.foodapp.entity;
+package com.example.hotelordering.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +14,7 @@ public class MenuItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "menu_item_id")
     private Long id;
 
     private String name;
@@ -22,6 +23,5 @@ public class MenuItem {
 
     private Double price;
 
-    // 🔥 INVENTORY FEATURE
     private Integer stockQuantity;
 }
