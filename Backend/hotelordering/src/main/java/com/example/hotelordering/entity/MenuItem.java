@@ -23,5 +23,6 @@ public class MenuItem {
 
     private Double price;
 
+    @Column(name = "stock_quantity")
     private Integer stockQuantity;
 }

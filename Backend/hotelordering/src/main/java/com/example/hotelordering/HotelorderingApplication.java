@@ -8,6 +8,7 @@ public class HotelorderingApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(HotelorderingApplication.class, args);
+		System.out.println("\n Backend is working \n");
 	}
 
 }
