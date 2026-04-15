@@ -13,9 +13,12 @@ import MenuManager from '../pages/admin/MenuManager'
 import AdminOrders from '../pages/admin/Orders'
 import Analytics from '../pages/admin/Analytics'
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? children : <Navigate replace to="/login" />
+function ProtectedRoute({ children, adminOnly = false }) {
+  const { isAuthenticated, isAdminAuthenticated } = useAuth()
+  const allowed = adminOnly ? isAdminAuthenticated : isAuthenticated
+  const redirectPath = adminOnly ? '/admin/login' : '/login'
+
+  return allowed ? children : <Navigate replace to={redirectPath} />
 }
 
 function AppShell({ children }) {
@@ -79,33 +82,41 @@ function AppRoutes() {
       <Route
         path="/admin/dashboard"
         element={
-          <AppShell>
-            <Dashboard />
-          </AppShell>
+          <ProtectedRoute adminOnly>
+            <AppShell>
+              <Dashboard />
+            </AppShell>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/admin/menu"
         element={
-          <AppShell>
-            <MenuManager />
-          </AppShell>
+          <ProtectedRoute adminOnly>
+            <AppShell>
+              <MenuManager />
+            </AppShell>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/admin/orders"
         element={
-          <AppShell>
-            <AdminOrders />
-          </AppShell>
+          <ProtectedRoute adminOnly>
+            <AppShell>
+              <AdminOrders />
+            </AppShell>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/admin/analytics"
         element={
-          <AppShell>
-            <Analytics />
-          </AppShell>
+          <ProtectedRoute adminOnly>
+            <AppShell>
+              <Analytics />
+            </AppShell>
+          </ProtectedRoute>
         }
       />
 

@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 const userLinks = [
   { to: '/menu', label: 'Menu' },
   { to: '/cart', label: 'Cart' },
+  { to: '/orders', label: 'Orders' },
+  { to: '/favourites', label: 'Favourites' },
 ]
 
 const adminLinks = [
@@ -15,12 +17,15 @@ const adminLinks = [
 
 function Navbar() {
   const { pathname } = useLocation()
-  const { isAuthenticated, logout } = useAuth()
-  const links = pathname.startsWith('/admin') ? adminLinks : userLinks
+  const { isAuthenticated, isAdminAuthenticated, logout, logoutAdmin } = useAuth()
+  const isAdminSection = pathname.startsWith('/admin')
+  const links = isAdminSection ? adminLinks : userLinks
+  const showLogout = isAdminSection ? isAdminAuthenticated : isAuthenticated
+  const handleLogout = isAdminSection ? logoutAdmin : logout
 
   return (
     <header className="navbar">
-      <Link className="brand" to={pathname.startsWith('/admin') ? '/admin/dashboard' : '/menu'}>
+      <Link className="brand" to={isAdminSection ? '/admin/dashboard' : '/menu'}>
         SmartCafe
       </Link>
 
@@ -36,8 +41,8 @@ function Navbar() {
         ))}
       </nav>
 
-      {isAuthenticated ? (
-        <button className="secondary-button" onClick={logout} type="button">
+      {showLogout ? (
+        <button className="secondary-button" onClick={handleLogout} type="button">
           Logout
         </button>
       ) : null}

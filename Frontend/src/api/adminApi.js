@@ -8,6 +8,14 @@ export function getAdminOrders() {
   return API.get('/admin/orders')
 }
 
+export async function getAdminMenu() {
+  try {
+    return await API.get('/admin/menu/allProducts')
+  } catch (error) {
+    return API.get('/user/menu')
+  }
+}
+
 export function addMenuItem(payload) {
   return API.post('/admin/menu', payload)
 }

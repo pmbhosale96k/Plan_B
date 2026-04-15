@@ -82,6 +82,12 @@ select {
   margin: 0 auto;
 }
 
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 1rem;
+}
+
 .cart-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -91,6 +97,20 @@ select {
 .stack-layout {
   display: grid;
   gap: 2rem;
+}
+
+.compact-stack {
+  gap: 1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.single-stat {
+  grid-template-columns: minmax(220px, 320px);
 }
 
 .section-heading {
@@ -112,6 +132,10 @@ select {
   margin-bottom: 1rem;
 }
 
+.subsection-heading h2 {
+  font-size: 1.35rem;
+}
+
 .eyebrow {
   margin: 0 0 0.3rem;
   text-transform: uppercase;
@@ -125,6 +149,21 @@ select {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
+}
+
+.list-layout {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
 }
 
 .card {
@@ -154,6 +193,11 @@ select {
   padding: 1rem;
 }
 
+.stat-card h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
 .card-header {
   display: flex;
   align-items: center;
@@ -174,11 +218,18 @@ select {
   margin-top: 1rem;
 }
 
+.button-row,
 .quantity-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -224,6 +275,26 @@ select {
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
 }
 
+.auth-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.auth-switch-link {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+}
+
+.auth-switch-link.active {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
 .auth-card input {
   width: 100%;
   border: 1px solid #cbd5e1;
@@ -232,24 +303,32 @@ select {
   background: #f8fafc;
 }
 
-.helper-text {
-  margin: -0.25rem 0 0;
-  color: #64748b;
-}
-
 .demo-credentials {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.25rem;
   padding: 0.9rem 1rem;
   border-radius: 14px;
   background: #eff6ff;
   border: 1px solid #bfdbfe;
-  color: #1e3a8a;
+  color: #1d4ed8;
 }
 
-.demo-credentials strong,
-.demo-credentials span {
-  margin: 0;
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-grid input,
+.form-grid textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  background: #f8fafc;
+}
+
+.table-wrapper {
+  overflow-x: auto;
 }
 
 .loader {
@@ -283,6 +362,10 @@ select {
   width: 100%;
 }
 
+.muted-text {
+  color: #64748b;
+}
+
 .message {
   margin: 0;
   padding: 0.9rem 1rem;
@@ -308,6 +391,26 @@ select {
   border-color: #fde68a;
 }
 
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.9rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.data-table th {
+  color: #475569;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 @media (max-width: 768px) {
   .navbar,
   .section-heading {
@@ -315,10 +418,12 @@ select {
     align-items: flex-start;
   }
 
+  .admin-grid,
   .cart-layout {
     grid-template-columns: 1fr;
   }
 
+  .button-row,
   .card-actions {
     flex-direction: column;
   }

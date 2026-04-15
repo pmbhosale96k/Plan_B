@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { extractMessage } from '../../api/helpers'
 import { registerUser } from '../../api/userApi'
 import Loader from '../../components/Loader'
 
@@ -17,14 +18,12 @@ function Register() {
     setSuccessMessage('')
 
     try {
-      await registerUser(formData)
-      setSuccessMessage('Registration successful. You can log in now.')
+      const response = await registerUser(formData)
+      setSuccessMessage(extractMessage(response, 'Registration successful. You can log in now.'))
       navigate('/login')
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message ||
-          error.message ||
-          'Registration failed. The backend register endpoint may not be implemented yet.',
+        error.response?.data?.message || error.message || 'Registration failed. Please try again.',
       )
     } finally {
       setIsSubmitting(false)
@@ -37,26 +36,24 @@ function Register() {
         <p className="eyebrow">Create Account</p>
         <h1>Join SmartCafe</h1>
         <input
+          onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
           placeholder="Name"
           required
           value={formData.name}
-          onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
         />
         <input
-          placeholder="Email"
-          type="email"
-          required
-          value={formData.email}
           onChange={(event) => setFormData((current) => ({ ...current, email: event.target.value }))}
+          placeholder="Email"
+          required
+          type="email"
+          value={formData.email}
         />
         <input
+          onChange={(event) => setFormData((current) => ({ ...current, password: event.target.value }))}
           placeholder="Password"
-          type="password"
           required
+          type="password"
           value={formData.password}
-          onChange={(event) =>
-            setFormData((current) => ({ ...current, password: event.target.value }))
-          }
         />
         {errorMessage ? <p className="message error-message">{errorMessage}</p> : null}
         {successMessage ? <p className="message success-message">{successMessage}</p> : null}

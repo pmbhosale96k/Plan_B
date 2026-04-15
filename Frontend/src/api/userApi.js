@@ -8,16 +8,28 @@ export function registerUser(payload) {
   return API.post('/auth/user/register', payload)
 }
 
-export function getMenu() {
-  return API.get('/user/menu')
+export async function getMenu() {
+  try {
+    return await API.get('/user/menu')
+  } catch (error) {
+    return API.get('/admin/menu/allProducts')
+  }
 }
 
-export function getBestSellers() {
-  return API.get('/user/menu/best-sellers')
+export async function getBestSellers() {
+  try {
+    return await API.get('/user/menu/best-sellers')
+  } catch (error) {
+    return getMenu()
+  }
 }
 
 export function placeOrder(payload) {
   return API.post('/user/orders', payload)
+}
+
+export function getUserOrders() {
+  return API.get('/user/orders')
 }
 
 export function getFavourites() {
