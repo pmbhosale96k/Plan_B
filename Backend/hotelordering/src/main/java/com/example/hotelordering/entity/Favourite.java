@@ -1,4 +1,4 @@
-package com.hcl.foodapp.entity;
+package com.example.hotelordering.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

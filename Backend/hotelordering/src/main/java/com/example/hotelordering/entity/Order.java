@@ -1,6 +1,5 @@
-package com.hcl.foodapp.entity;
+package com.example.hotelordering.entity;
 
-import com.hcl.foodapp.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,25 +17,32 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "order_id")
+    private Long orderId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "total_amount")
     private Double totalAmount;
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
     @PrePersist
-    public void init() {
+    public void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.status = OrderStatus.PENDING;
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
