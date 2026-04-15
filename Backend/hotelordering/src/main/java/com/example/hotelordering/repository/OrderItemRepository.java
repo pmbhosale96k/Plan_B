@@ -18,6 +18,4 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
                 LIMIT 3
             """, nativeQuery = true)
     List<Object[]> getTopSellingItems();
-
-
 }
