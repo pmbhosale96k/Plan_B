@@ -1,8 +1,8 @@
-package com.example.hotelordering.enums;
+package com.hcl.foodapp.enums;
 
 public enum OrderStatus {
-    PLACED,
-    PREPARING,
+    PENDING,
+    CONFIRMED,
     DELIVERED,
     CANCELLED
 }
