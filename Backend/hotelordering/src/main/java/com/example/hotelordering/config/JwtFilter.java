@@ -38,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                    // ✅ create authentication object
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userId,
@@ -48,12 +47,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // 🔥 VERY IMPORTANT
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
 
             } catch (Exception e) {
-                // token invalid → do nothing (Spring will block)
             }
         }
 

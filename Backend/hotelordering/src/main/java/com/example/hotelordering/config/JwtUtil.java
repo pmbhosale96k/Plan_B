@@ -11,7 +11,6 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // ✅ Fixed secret key — does not change on restart
     private final Key key = Keys.hmacShaKeyFor(
             Base64.getDecoder().decode("dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9ySldUMTIzNDU2Nzg=")
     );

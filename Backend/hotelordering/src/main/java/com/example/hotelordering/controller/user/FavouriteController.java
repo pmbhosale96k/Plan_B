@@ -17,7 +17,6 @@ public class FavouriteController {
 
     private final FavouriteService favouriteService;
 
-    // ✅ ADD FAVOURITE
     @PostMapping("/{menuItemId}")
     public String addFavourite(@PathVariable Long menuItemId) {
 
@@ -27,7 +26,6 @@ public class FavouriteController {
         return favouriteService.addFavourite(userId, menuItemId);
     }
 
-    // ✅ GET FAVOURITES
     @GetMapping
     public List<FavouriteResponse> getFavourites() {
 
@@ -45,6 +43,6 @@ public class FavouriteController {
 
         favouriteService.removeFavourite(userId, menuItemId);
 
-        return "Removed from favourites successfully"; // ✅ simple response
+        return "Removed from favourites successfully"; 
     }
 }

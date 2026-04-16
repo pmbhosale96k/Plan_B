@@ -22,7 +22,6 @@ public class FavouriteService {
     private final UserRepository userRepository;
     private final MenuItemRepository menuItemRepository;
 
-    // ✅ ADD FAVOURITE
     public String addFavourite(String userId, Long menuItemId) {
 
         User user = userRepository.findByUserId(userId)
@@ -31,7 +30,6 @@ public class FavouriteService {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));
 
-        // 🔥 prevent duplicate
         if (favouriteRepository.findByUserAndMenuItem(user, menuItem).isPresent()) {
             return "Already added to favourites";
         }
@@ -46,7 +44,6 @@ public class FavouriteService {
         return "Added to favourites";
     }
 
-    // ✅ GET ALL FAVOURITES
     public List<FavouriteResponse> getUserFavourites(String userId) {
 
         User user = userRepository.findByUserId(userId)
@@ -64,8 +61,7 @@ public class FavouriteService {
         ).toList();
     }
 
-    // ✅ REMOVE FAVOURITE (OPTIONAL BONUS)
-    @Transactional   // ✅ ADD THIS
+    @Transactional   
     public void removeFavourite(String userId, Long menuItemId) {
 
         User user = userRepository.findByUserId(userId)

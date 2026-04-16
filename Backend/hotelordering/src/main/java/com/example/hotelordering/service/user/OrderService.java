@@ -28,7 +28,6 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         double total = 0;
 
-        // 🔥 create order first (without items)
         Order order = new Order();
         order.setUser(user);
 
@@ -53,7 +52,7 @@ public class OrderService {
         order.setTotalAmount(total);
         order.setOrderItems(orderItems);
 
-        orderRepository.save(order); // 🔥 cascade saves orderItems
+        orderRepository.save(order); 
 
         return "Order placed successfully";
     }
